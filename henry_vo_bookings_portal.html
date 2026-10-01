@@ -1,0 +1,1316 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Henry Vo Bookings | Premium Concierge & Experience Reservation Portal</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        gold: {
+                            50: '#fffbeb',
+                            100: '#fef3c7',
+                            400: '#fbbf24',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                            700: '#b45309',
+                        },
+                        brand: {
+                            dark: '#0f172a',
+                            navy: '#1e293b',
+                            card: '#1e293b',
+                            accent: '#f59e0b'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #f59e0b;
+        }
+        
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.75);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .glass-card {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .gold-gradient-text {
+            background: linear-gradient(135deg, #fef3c7 0%, #f59e0b 50%, #d97706 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .gold-gradient-bg {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans antialiased min-h-screen flex flex-col selection:bg-amber-500 selection:text-slate-950">
+
+    <div class="bg-gradient-to-r from-amber-600 via-amber-500 to-amber-600 text-slate-950 font-medium text-xs sm:text-sm py-2 px-4 text-center flex flex-wrap items-center justify-center gap-2 shadow-md">
+        <span class="flex items-center gap-1 font-bold">
+            <i data-lucide="sparkles" class="w-4 h-4"></i> Free Consultation Available:
+        </span>
+        <span>Need guidance before booking? Ask Henry Vo Concierge or combine 2+ services for a 10% Bundle Discount!</span>
+        <button onclick="openConsultationModal()" class="underline font-bold ml-1 hover:text-slate-900 transition flex items-center gap-1">
+            <i data-lucide="message-square-quote" class="w-3.5 h-3.5"></i> Request Free Consultation
+        </button>
+    </div>
+
+    <header class="sticky top-0 z-30 glass-panel border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
+            <!-- Brand Logo & Agent Identifier -->
+            <div class="flex items-center gap-3">
+                <div class="w-11 h-11 rounded-2xl gold-gradient-bg flex items-center justify-center text-slate-950 font-extrabold text-xl shadow-lg shadow-amber-500/20">
+                    HV
+                </div>
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-white flex items-center gap-2">
+                        Henry Vo Bookings
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20">Concierge Agent</span>
+                    </h1>
+                    <p class="text-xs text-slate-400 hidden sm:block">Trusted 3rd-Party Reservation Intermediary & Custom Experience Coordinator</p>
+                </div>
+            </div>
+
+            <!-- Header Action Controls -->
+            <div class="flex items-center gap-2 sm:gap-3">
+                <!-- Direct Consultation Request Trigger -->
+                <button onclick="openConsultationModal()" class="px-3 py-2 sm:px-4 sm:py-2.5 rounded-xl bg-slate-800/90 hover:bg-slate-700 text-amber-400 border border-amber-500/30 transition flex items-center gap-2 text-xs sm:text-sm font-semibold">
+                    <i data-lucide="help-circle" class="w-4 h-4"></i>
+                    <span class="hidden sm:inline">Request Advice</span>
+                </button>
+
+                <!-- Search Input (Desktop) -->
+                <div class="relative hidden md:block w-52 lg:w-60">
+                    <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                    <input type="text" id="searchInput" oninput="filterServices()" placeholder="Search services..." class="w-full bg-slate-900/80 text-sm text-slate-200 placeholder-slate-500 rounded-xl pl-9 pr-4 py-2 border border-slate-700/60 focus:outline-none focus:border-amber-500 transition">
+                </div>
+
+                <!-- Google Sites Integration Button -->
+                <button onclick="toggleEmbedGuide()" class="p-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-amber-400 border border-slate-700 transition flex items-center gap-2 text-sm" title="Google Sites Integration Code">
+                    <i data-lucide="code" class="w-4 h-4"></i>
+                    <span class="hidden xl:inline font-medium text-xs">Embed Guide</span>
+                </button>
+
+                <!-- Cart Drawer Toggle -->
+                <button onclick="toggleCartDrawer()" class="relative p-2.5 rounded-xl gold-gradient-bg text-slate-950 font-semibold hover:brightness-110 transition flex items-center gap-2 shadow-lg shadow-amber-500/20">
+                    <i data-lucide="calendar-check" class="w-5 h-5"></i>
+                    <span class="hidden sm:inline text-sm font-bold">Selected Services</span>
+                    <span id="cartBadgeCount" class="bg-slate-950 text-amber-400 text-xs font-bold px-2 py-0.5 rounded-full min-w-[20px] text-center">0</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+        
+        <!-- Hero Section with Agent Value Proposition -->
+        <section class="relative rounded-3xl overflow-hidden glass-panel p-6 sm:p-10 border border-slate-800 shadow-2xl">
+            <div class="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/95 to-transparent z-10"></div>
+            <div class="absolute -right-20 -top-20 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+            
+            <div class="relative z-20 max-w-3xl space-y-4">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-semibold">
+                    <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
+                    Official Agent Service & Intermediary Support
+                </div>
+                <h2 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-white leading-tight">
+                    Seamless Bookings & <span class="gold-gradient-text">Personal Consultation</span>
+                </h2>
+                <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+                    Henry Vo Bookings bridges guests and premium shop owners. Customize guest quantities (1, 2, 3+), reserve dining, spa, villas, and events, or request a complimentary consultation to tailor your custom itinerary before confirming.
+                </p>
+
+                <!-- Direct Notification Dispatch Notice -->
+                <div class="p-3 bg-slate-900/90 rounded-2xl border border-amber-500/20 text-xs text-slate-300 flex items-center gap-3">
+                    <i data-lucide="mail-check" class="w-5 h-5 text-amber-400 flex-shrink-0"></i>
+                    <span>All booking submissions and consultation requests are processed directly via <strong class="text-amber-400 font-mono">vothanhnien@gmail.com</strong> for instant concierge confirmation.</span>
+                </div>
+
+                <div class="pt-2 flex flex-wrap gap-3 items-center">
+                    <a href="#servicesContainer" class="px-6 py-3 rounded-xl gold-gradient-bg text-slate-950 font-bold text-sm shadow-lg shadow-amber-500/20 hover:scale-105 transition flex items-center gap-2">
+                        <i data-lucide="compass" class="w-4 h-4"></i> Browse All Services
+                    </a>
+                    <button onclick="openConsultationModal()" class="px-6 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-amber-400 font-bold text-sm border border-amber-500/30 transition flex items-center gap-2">
+                        <i data-lucide="headset" class="w-4 h-4"></i> Request Initial Consultation
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 flex items-start gap-4">
+                <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center flex-shrink-0">
+                    <i data-lucide="users-2" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h3 class="text-sm font-bold text-white mb-1">Multi-Guest Customization</h3>
+                    <p class="text-xs text-slate-400 leading-relaxed">Flexible quantity controls (1, 2, 3, 10+) for groups, corporate teams, families, and couples.</p>
+                </div>
+            </div>
+
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 flex items-start gap-4">
+                <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center flex-shrink-0">
+                    <i data-lucide="building-2" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h3 class="text-sm font-bold text-white mb-1">3rd-Party Guarantee</h3>
+                    <p class="text-xs text-slate-400 leading-relaxed">We coordinate directly with verified shop owners to secure top seats, VIP villas, and priority slots.</p>
+                </div>
+            </div>
+
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 flex items-start gap-4">
+                <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center flex-shrink-0">
+                    <i data-lucide="message-square" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h3 class="text-sm font-bold text-white mb-1">Consultation Before Deciding</h3>
+                    <p class="text-xs text-slate-400 leading-relaxed">Not sure what to choose? Submit an initial inquiry and receive expert guidance before paying.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="space-y-4">
+            <div class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
+                <!-- Category Tabs -->
+                <div class="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0 no-scrollbar" id="categoryTabs">
+                    <button onclick="setCategory('all')" data-category="all" class="cat-btn px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap bg-amber-500 text-slate-950 font-bold shadow-md transition">
+                        All Services
+                    </button>
+                    <button onclick="setCategory('dining')" data-category="dining" class="cat-btn px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap bg-slate-900 text-slate-300 hover:text-white border border-slate-800 transition">
+                        <i data-lucide="utensils" class="w-3.5 h-3.5 inline mr-1"></i> Dining & Drinks
+                    </button>
+                    <button onclick="setCategory('beauty')" data-category="beauty" class="cat-btn px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap bg-slate-900 text-slate-300 hover:text-white border border-slate-800 transition">
+                        <i data-lucide="sparkles" class="w-3.5 h-3.5 inline mr-1"></i> Beauty & Spa
+                    </button>
+                    <button onclick="setCategory('events')" data-category="events" class="cat-btn px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap bg-slate-900 text-slate-300 hover:text-white border border-slate-800 transition">
+                        <i data-lucide="party-popper" class="w-3.5 h-3.5 inline mr-1"></i> Events & Parties
+                    </button>
+                    <button onclick="setCategory('stays')" data-category="stays" class="cat-btn px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap bg-slate-900 text-slate-300 hover:text-white border border-slate-800 transition">
+                        <i data-lucide="home" class="w-3.5 h-3.5 inline mr-1"></i> Stays & Flights
+                    </button>
+                    <button onclick="setCategory('combo')" data-category="combo" class="cat-btn px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap bg-slate-900 text-amber-400 hover:text-amber-300 border border-amber-500/30 transition">
+                        <i data-lucide="layers" class="w-3.5 h-3.5 inline mr-1"></i> Henry Vo Combos
+                    </button>
+                </div>
+
+                <!-- Search Input for Mobile/Tablet -->
+                <div class="relative md:hidden w-full">
+                    <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                    <input type="text" id="mobileSearchInput" oninput="syncAndFilter(this.value)" placeholder="Search table, spa, villa, air ticket..." class="w-full bg-slate-900 text-sm text-slate-200 placeholder-slate-500 rounded-xl pl-9 pr-4 py-2.5 border border-slate-800 focus:outline-none focus:border-amber-500">
+                </div>
+            </div>
+        </section>
+
+        <section id="servicesContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Dynamically populated via JavaScript -->
+        </section>
+
+    </main>
+
+    <footer class="mt-16 border-t border-slate-800 bg-slate-950 py-12 text-slate-400 text-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div class="space-y-3 md:col-span-2">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-xl gold-gradient-bg flex items-center justify-center text-slate-950 font-bold text-sm">
+                        HV
+                    </div>
+                    <span class="text-lg font-bold text-white">Henry Vo Bookings Portal</span>
+                </div>
+                <p class="text-xs text-slate-400 max-w-sm">
+                    Premier concierge booking agency and 3rd-party liaison. Custom quantity service reservations with expert consultation for dining, private villas, spa packages, air tickets, and corporate events.
+                </p>
+                <div class="text-xs text-amber-400/90 font-mono flex items-center gap-2">
+                    <i data-lucide="mail" class="w-4 h-4"></i> Official Reservation Inbox: vothanhnien@gmail.com
+                </div>
+            </div>
+
+            <div>
+                <h3 class="text-white font-semibold mb-3 text-xs uppercase tracking-wider">Services & Experiences</h3>
+                <ul class="space-y-2 text-xs">
+                    <li><a href="#servicesContainer" onclick="setCategory('dining')" class="hover:text-amber-400 transition">Steak Dinner & Table Reserve</a></li>
+                    <li><a href="#servicesContainer" onclick="setCategory('beauty')" class="hover:text-amber-400 transition">Luxury Spa & Salon Treatments</a></li>
+                    <li><a href="#servicesContainer" onclick="setCategory('stays')" class="hover:text-amber-400 transition">Private Villa & Flight Passes</a></li>
+                    <li><a href="#servicesContainer" onclick="setCategory('events')" class="hover:text-amber-400 transition">Parties & Corporate Events</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h3 class="text-white font-semibold mb-3 text-xs uppercase tracking-wider">Agent Assistance</h3>
+                <p class="text-xs text-slate-400 mb-3">Would you like Henry Vo to customize a full itinerary or coordinate special venue requests?</p>
+                <button onclick="openConsultationModal()" class="text-xs px-3 py-2 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400 hover:bg-amber-500 hover:text-slate-950 font-bold transition flex items-center gap-1.5">
+                    <i data-lucide="headset" class="w-3.5 h-3.5"></i> Request Free Advice
+                </button>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 pt-6 border-t border-slate-900 text-center text-xs text-slate-500">
+            &copy; <span id="year"></span> Henry Vo Bookings. Powered by Concierge Agent System. Email: vothanhnien@gmail.com
+        </div>
+    </footer>
+
+    <div id="consultationModal" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md hidden flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-xl w-full max-h-[90vh] flex flex-col overflow-hidden shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+            
+            <div class="p-6 border-b border-slate-800 flex items-center justify-between bg-slate-900/50">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center">
+                        <i data-lucide="headset" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-white">Request Initial Consultation</h3>
+                        <p class="text-xs text-amber-400 font-medium">Free advice before booking or reconfirming</p>
+                    </div>
+                </div>
+                <button onclick="closeConsultationModal()" class="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <div class="p-6 overflow-y-auto space-y-4 flex-grow text-xs">
+                <p class="text-slate-300 leading-relaxed">
+                    Not ready to pay or reconfirm yet? Submit your questions, guest requirements, or preferred schedule below. <strong>Henry Vo Concierge</strong> will analyze your request and reply to your email or phone with options.
+                </p>
+
+                <!-- Target Email Notice -->
+                <div class="p-3 bg-slate-950 border border-slate-800 rounded-xl flex items-center justify-between font-mono text-slate-300">
+                    <span class="text-slate-400">Recipient Email:</span>
+                    <span class="text-amber-400 font-bold">vothanhnien@gmail.com</span>
+                </div>
+
+                <div class="space-y-3 pt-2">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-slate-400 mb-1 font-semibold">Your Name *</label>
+                            <input type="text" id="consultName" placeholder="Full Name" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-amber-500">
+                        </div>
+                        <div>
+                            <label class="block text-slate-400 mb-1 font-semibold">Phone / WhatsApp *</label>
+                            <input type="tel" id="consultPhone" placeholder="Phone Number" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-amber-500">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-slate-400 mb-1 font-semibold">Email Address *</label>
+                        <input type="email" id="consultEmail" placeholder="yourname@domain.com" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-amber-500">
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-slate-400 mb-1 font-semibold">Services You Are Interested In</label>
+                            <select id="consultServicePref" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-amber-500">
+                                <option value="General Concierge Advice">General Concierge Advice</option>
+                                <option value="Steak Dinner & Table Reserve">Steak Dinner & Table Reserve</option>
+                                <option value="Spa & Beauty Salon">Spa & Beauty Salon</option>
+                                <option value="Villa & Air Tickets">Villa & Air Tickets</option>
+                                <option value="Party & Corporate Event">Party & Corporate Event</option>
+                                <option value="Custom Henry Vo Combo Package">Custom Henry Vo Combo Package</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-slate-400 mb-1 font-semibold">Estimated Guest Quantity</label>
+                            <input type="number" id="consultGuestCount" min="1" value="2" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-amber-500">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-slate-400 mb-1 font-semibold">Your Questions or Custom Requests</label>
+                        <textarea id="consultNotes" rows="3" placeholder="Tell us your target date, budget, seating preference, or questions..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-amber-500 resize-none"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-6 border-t border-slate-800 bg-slate-950/80 flex items-center justify-between gap-3">
+                <span class="text-xs text-slate-400">Free service by Henry Vo Agent</span>
+                <button onclick="submitConsultationForm()" class="px-6 py-3 rounded-xl gold-gradient-bg text-slate-950 font-bold text-sm shadow-lg shadow-amber-500/20 hover:brightness-110 transition flex items-center gap-2">
+                    <i data-lucide="send" class="w-4 h-4"></i> Submit to Concierge
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="bookingModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-xl w-full max-h-[90vh] flex flex-col overflow-hidden shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+            
+            <!-- Modal Header -->
+            <div class="p-6 border-b border-slate-800 flex items-center justify-between bg-slate-900/50">
+                <div class="flex items-center gap-3">
+                    <div id="modalIconContainer" class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center">
+                        <i data-lucide="calendar" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h3 id="modalServiceTitle" class="text-lg font-bold text-white">Book Service</h3>
+                        <p id="modalServiceCategory" class="text-xs text-amber-400 font-medium">Henry Vo Service</p>
+                    </div>
+                </div>
+                <button onclick="closeBookingModal()" class="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="p-6 overflow-y-auto space-y-6 flex-grow">
+                
+                <!-- Service Summary & Price -->
+                <div class="glass-card p-4 rounded-2xl flex items-center justify-between">
+                    <div>
+                        <span class="text-xs text-slate-400 block">Unit Price</span>
+                        <span id="modalUnitPrice" class="text-xl font-extrabold text-white">$0</span>
+                        <span id="modalUnitLabel" class="text-xs text-slate-400">/ person</span>
+                    </div>
+                    <!-- Quantity Control -->
+                    <div class="space-y-1 text-right">
+                        <label class="text-xs text-amber-400 font-semibold block">Guest / Slot Quantity:</label>
+                        <div class="inline-flex items-center bg-slate-950 rounded-xl border border-slate-700 p-1">
+                            <button onclick="updateModalQty(-1)" class="w-8 h-8 rounded-lg bg-slate-800 text-slate-200 hover:bg-amber-500 hover:text-slate-950 font-bold transition flex items-center justify-center">-</button>
+                            <span id="modalQtyDisplay" class="w-12 text-center font-bold text-white text-base">1</span>
+                            <button onclick="updateModalQty(1)" class="w-8 h-8 rounded-lg bg-slate-800 text-slate-200 hover:bg-amber-500 hover:text-slate-950 font-bold transition flex items-center justify-center">+</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Date Picker -->
+                <div class="space-y-2">
+                    <label class="text-xs font-semibold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+                        <i data-lucide="calendar-days" class="w-4 h-4 text-amber-400"></i> Select Reservation Date
+                    </label>
+                    <input type="date" id="bookingDate" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-slate-200 focus:outline-none focus:border-amber-500 text-sm">
+                </div>
+
+                <!-- Time Slot Picker -->
+                <div class="space-y-2">
+                    <label class="text-xs font-semibold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+                        <i data-lucide="clock" class="w-4 h-4 text-amber-400"></i> Preferred Time Slot
+                    </label>
+                    <div class="grid grid-cols-3 sm:grid-cols-4 gap-2" id="timeSlotsContainer">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <!-- Customer Details Form -->
+                <div class="space-y-3 pt-2 border-t border-slate-800">
+                    <h4 class="text-xs font-semibold text-slate-300 uppercase tracking-wider">Contact & Guest Information</h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <input type="text" id="custName" placeholder="Full Name *" class="bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-amber-500">
+                        <input type="tel" id="custPhone" placeholder="Phone Number *" class="bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-amber-500">
+                    </div>
+                    <input type="email" id="custEmail" placeholder="Email Address (for direct reservation notice)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-amber-500">
+                    <textarea id="custNotes" rows="2" placeholder="Special requests, dietary needs, seating preference..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-amber-500 resize-none"></textarea>
+                </div>
+
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="p-6 border-t border-slate-800 bg-slate-950/80 flex items-center justify-between gap-4">
+                <div>
+                    <span class="text-xs text-slate-400 block">Total Estimated Price</span>
+                    <span id="modalTotalPrice" class="text-2xl font-black text-amber-400">$0</span>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="addToCartFromModal()" class="px-4 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-sm transition">
+                        Add to Cart
+                    </button>
+                    <button onclick="confirmSingleBooking()" class="px-6 py-3 rounded-xl gold-gradient-bg text-slate-950 font-bold text-sm shadow-lg shadow-amber-500/20 hover:brightness-110 transition flex items-center gap-1.5">
+                        Confirm & Request <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="cartDrawer" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex justify-end">
+        <div class="bg-slate-900 w-full max-w-md h-full border-l border-slate-800 flex flex-col justify-between shadow-2xl animate-in slide-in-from-right duration-300">
+            
+            <!-- Drawer Header -->
+            <div class="p-5 border-b border-slate-800 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="shopping-bag" class="w-5 h-5 text-amber-400"></i>
+                    <h3 class="font-bold text-white text-lg">Selected Services Cart</h3>
+                </div>
+                <button onclick="toggleCartDrawer()" class="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <!-- Cart Items List -->
+            <div class="p-5 overflow-y-auto space-y-4 flex-grow" id="cartItemsContainer">
+                <!-- JS populated -->
+            </div>
+
+            <!-- Drawer Footer -->
+            <div class="p-5 border-t border-slate-800 bg-slate-950/90 space-y-4">
+                <div class="space-y-2 text-sm">
+                    <div class="flex justify-between text-slate-400">
+                        <span>Subtotal</span>
+                        <span id="cartSubtotal" class="text-slate-200 font-semibold">$0</span>
+                    </div>
+                    <div id="comboDiscountRow" class="flex justify-between text-emerald-400 hidden">
+                        <span class="flex items-center gap-1"><i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Multi-Booking Combo Discount (10%)</span>
+                        <span id="cartDiscount" class="font-bold">-$0</span>
+                    </div>
+                    <div class="flex justify-between text-base text-white font-bold pt-2 border-t border-slate-800">
+                        <span>Final Total</span>
+                        <span id="cartTotal" class="text-amber-400 text-xl font-extrabold">$0</span>
+                    </div>
+                </div>
+
+                <button onclick="openCartCheckoutModal()" id="cartCheckoutBtn" class="w-full py-3.5 rounded-xl gold-gradient-bg text-slate-950 font-bold text-sm shadow-lg shadow-amber-500/20 hover:brightness-110 transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                    Proceed to Reservation <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="confirmationModal" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md hidden flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-lg w-full p-6 sm:p-8 space-y-6 text-center shadow-2xl animate-in zoom-in-95 duration-200">
+            
+            <div class="w-16 h-16 rounded-full gold-gradient-bg text-slate-950 flex items-center justify-center mx-auto shadow-lg shadow-amber-500/20">
+                <i data-lucide="check" class="w-10 h-10 stroke-[3]"></i>
+            </div>
+
+            <div>
+                <span class="inline-block px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-bold border border-emerald-500/20 mb-2">
+                    Booking Request Registered
+                </span>
+                <h3 class="text-2xl font-extrabold text-white">Thank You for Your Request!</h3>
+                <p class="text-xs text-slate-400 mt-1">Your details have been compiled for Henry Vo Bookings Agent.</p>
+            </div>
+
+            <!-- Receipt Box -->
+            <div class="bg-slate-950 border border-slate-800 rounded-2xl p-4 text-left space-y-3 font-mono text-xs text-slate-300">
+                <div class="flex justify-between border-b border-slate-800 pb-2">
+                    <span class="text-slate-500">Ref Code:</span>
+                    <span id="confRefCode" class="text-amber-400 font-bold">HVB-000000</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-slate-500">Guest Name:</span>
+                    <span id="confGuestName" class="text-slate-200">--</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-slate-500">Phone:</span>
+                    <span id="confGuestPhone" class="text-slate-200">--</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-slate-500">Target Email:</span>
+                    <span class="text-amber-400 font-bold">vothanhnien@gmail.com</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-slate-500">Date & Slot:</span>
+                    <span id="confDateTime" class="text-slate-200">--</span>
+                </div>
+                <div class="border-t border-slate-800 pt-2 space-y-1" id="confServicesList">
+                    <!-- Populated by JS -->
+                </div>
+                <div class="border-t border-slate-800 pt-2 flex justify-between font-sans text-sm">
+                    <span class="font-bold text-white">Total Amount:</span>
+                    <span id="confTotalAmount" class="font-extrabold text-amber-400">$0</span>
+                </div>
+            </div>
+
+            <!-- Email Routing Action Buttons -->
+            <div class="space-y-2">
+                <button onclick="sendDirectEmailToAgent()" class="w-full py-3.5 rounded-xl gold-gradient-bg text-slate-950 font-bold text-xs shadow-lg shadow-amber-500/20 hover:brightness-110 transition flex items-center justify-center gap-2">
+                    <i data-lucide="mail-plus" class="w-4 h-4"></i> Send Email directly to vothanhnien@gmail.com
+                </button>
+                <div class="flex gap-2">
+                    <button onclick="copyReceiptText()" class="flex-1 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold transition flex items-center justify-center gap-1.5">
+                        <i data-lucide="copy" class="w-3.5 h-3.5"></i> Copy Summary
+                    </button>
+                    <button onclick="closeConfirmationModal()" class="flex-1 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-slate-300 hover:text-white text-xs font-semibold transition">
+                        Done
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="embedGuideModal" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md hidden flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-2xl w-full p-6 sm:p-8 space-y-5 shadow-2xl overflow-y-auto max-h-[90vh]">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center">
+                        <i data-lucide="code" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-white">How to Embed on Google Sites</h3>
+                        <p class="text-xs text-slate-400">Step-by-step embedding guide</p>
+                    </div>
+                </div>
+                <button onclick="toggleEmbedGuide()" class="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <div class="space-y-4 text-xs text-slate-300">
+                <p>Follow these steps to insert this Henry Vo Bookings portal into your <strong>Google Sites</strong> page:</p>
+                
+                <ol class="space-y-3 list-decimal list-inside bg-slate-950 p-4 rounded-2xl border border-slate-800">
+                    <li class="leading-relaxed"><strong class="text-white">Direct HTML Embedding:</strong> Open Google Sites &rarr; Click <span class="text-amber-400 font-semibold">Embed</span> in the right panel &rarr; Choose <span class="text-amber-400 font-semibold">Embed Code</span> &rarr; Paste this HTML document.</li>
+                    <li class="leading-relaxed"><strong class="text-white">Hosted iFrame:</strong> Upload this HTML file to GitHub Pages, Netlify, or your host, then embed by URL.</li>
+                    <li class="leading-relaxed"><strong class="text-white">Email Integration Note:</strong> All booking and consultation requests route to <span class="text-amber-400 font-mono">vothanhnien@gmail.com</span>.</li>
+                </ol>
+
+                <div class="space-y-2">
+                    <label class="text-white font-semibold flex items-center justify-between">
+                        <span>iFrame Embed Snippet</span>
+                        <button onclick="copyIframeCode()" class="text-amber-400 hover:underline flex items-center gap-1 text-xs">
+                            <i data-lucide="copy" class="w-3.5 h-3.5"></i> Copy iFrame
+                        </button>
+                    </label>
+                    <textarea id="iframeCodeText" readonly rows="3" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 font-mono text-xs text-amber-300 focus:outline-none resize-none"><iframe src="YOUR_HOSTED_URL_HERE" width="100%" height="850px" style="border:none; border-radius:16px;" allowfullscreen></iframe></textarea>
+                </div>
+            </div>
+
+            <div class="pt-2 text-right">
+                <button onclick="toggleEmbedGuide()" class="px-5 py-2.5 rounded-xl gold-gradient-bg text-slate-950 font-bold text-xs shadow-md">
+                    Got it, Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dynamic current year
+        document.getElementById('year').textContent = new Date().getFullYear();
+
+        // Target Email address requested by user
+        const AGENT_EMAIL = "vothanhnien@gmail.com";
+
+        // Master Service Data Array
+        const servicesData = [
+            {
+                id: 'steak-dinner',
+                title: 'Steak Dinner Experience',
+                category: 'dining',
+                price: 85,
+                unit: 'person',
+                rating: 4.9,
+                reviews: 128,
+                image: 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=600&q=80',
+                description: '45-day dry-aged Ribeye or Tenderloin with truffle butter, side dishes, and sommelier wine selection.',
+                popular: true
+            },
+            {
+                id: 'table-booking',
+                title: 'VIP Table Reservation',
+                category: 'dining',
+                price: 25,
+                unit: 'table deposit',
+                rating: 4.8,
+                reviews: 95,
+                image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=600&q=80',
+                description: 'Prime reserved seating at rooftop lounges and high-end dining partner venues with priority entry.',
+                popular: false
+            },
+            {
+                id: 'tea-break',
+                title: 'High Tea Break Service',
+                category: 'dining',
+                price: 18,
+                unit: 'guest',
+                rating: 4.7,
+                reviews: 64,
+                image: 'https://images.unsplash.com/photo-1558160074-4d7d8bdf4256?auto=format&fit=crop&w=600&q=80',
+                description: 'English scones, artisan finger sandwiches, organic loose-leaf teas, and French macarons.',
+                popular: false
+            },
+            {
+                id: 'spa-booking',
+                title: 'Luxury Spa Sanctuary',
+                category: 'beauty',
+                price: 75,
+                unit: 'session',
+                rating: 4.9,
+                reviews: 210,
+                image: 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&w=600&q=80',
+                description: 'Aromatherapy, warm herbal bath compress, and deep tissue therapy in private spa suites.',
+                popular: true
+            },
+            {
+                id: 'nail-booking',
+                title: 'Deluxe Nail & Pedicure',
+                category: 'beauty',
+                price: 40,
+                unit: 'guest',
+                rating: 4.8,
+                reviews: 142,
+                image: 'https://images.unsplash.com/photo-1604654894610-df63bc536371?auto=format&fit=crop&w=600&q=80',
+                description: 'Organic scrub exfoliation, gel manicure, moisturizing pedicure, and customized nail art.',
+                popular: false
+            },
+            {
+                id: 'relaxing-services',
+                title: 'Relaxing Head & Scalp Spa',
+                category: 'beauty',
+                price: 55,
+                unit: 'session',
+                rating: 4.9,
+                reviews: 88,
+                image: 'https://images.unsplash.com/photo-1519823551278-64ac92734fb1?auto=format&fit=crop&w=600&q=80',
+                description: 'Japanese scalp therapy detox, shoulder release, and warm eye compress relaxation procedure.',
+                popular: false
+            },
+            {
+                id: 'beauty-salon',
+                title: 'Glamour Beauty Salon',
+                category: 'beauty',
+                price: 65,
+                unit: 'guest',
+                rating: 4.8,
+                reviews: 115,
+                image: 'https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=600&q=80',
+                description: 'Hair wash, luxury blowout styling, facial refresh, and event makeup makeover.',
+                popular: false
+            },
+            {
+                id: 'party-booking',
+                title: 'Private Party Celebration',
+                category: 'events',
+                price: 250,
+                unit: 'event slot',
+                rating: 5.0,
+                reviews: 73,
+                image: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=600&q=80',
+                description: 'Birthday or anniversary setup with custom ambient decor, welcome drinks, and sound audio gear.',
+                popular: true
+            },
+            {
+                id: 'workshop',
+                title: 'Masterclass Workshop',
+                category: 'events',
+                price: 50,
+                unit: 'seat',
+                rating: 4.7,
+                reviews: 52,
+                image: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=600&q=80',
+                description: 'Hands-on sessions: Perfume making, cocktail mixology, ceramic pottery, or coffee brewing.',
+                popular: false
+            },
+            {
+                id: 'corporate-events',
+                title: 'Corporate Executive Suite',
+                category: 'events',
+                price: 450,
+                unit: 'package',
+                rating: 4.9,
+                reviews: 61,
+                image: 'https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=600&q=80',
+                description: 'Full conference audio-visual setup, corporate networking, catering, and dedicated coordinator.',
+                popular: false
+            },
+            {
+                id: 'villa-booking',
+                title: 'Private Luxury Villa Stay',
+                category: 'stays',
+                price: 320,
+                unit: 'night',
+                rating: 5.0,
+                reviews: 184,
+                image: 'https://images.unsplash.com/photo-1613977257363-707ba9348227?auto=format&fit=crop&w=600&q=80',
+                description: 'Oceanfront pool villa with private butler, 3 bedrooms, infinity pool, and gourmet breakfast.',
+                popular: true
+            },
+            {
+                id: 'air-tickets',
+                title: 'Concierge Air Tickets',
+                category: 'stays',
+                price: 190,
+                unit: 'ticket',
+                rating: 4.8,
+                reviews: 310,
+                image: 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=600&q=80',
+                description: 'Priority flight ticketing, seat selection, extra baggage assistance, and VIP lounge access.',
+                popular: false
+            },
+            {
+                id: 'combo-booking',
+                title: 'Henry Vo Signature Combo',
+                category: 'combo',
+                price: 399,
+                unit: 'all-inclusive',
+                rating: 5.0,
+                reviews: 240,
+                image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=600&q=80',
+                description: 'Complete Luxury Package: Steak Dinner for 2 + Full Body Spa + 1 Night Villa Stay + Airport Transfer.',
+                popular: true
+            }
+        ];
+
+        // Available Time Slots
+        const timeSlots = [
+            '09:00 AM', '10:30 AM', '12:00 PM', 
+            '01:30 PM', '03:00 PM', '04:30 PM', 
+            '06:00 PM', '07:30 PM', '09:00 PM'
+        ];
+
+        // Global State
+        let currentCategory = 'all';
+        let searchQuery = '';
+        let activeService = null;
+        let selectedModalQty = 1;
+        let selectedTimeSlot = '06:00 PM';
+        let cart = [];
+        let lastConfirmedBooking = null;
+
+        // Initialize App on DOM Ready
+        window.addEventListener('DOMContentLoaded', () => {
+            renderServices();
+            setupDateDefault();
+            renderTimeSlots();
+            lucide.createIcons();
+        });
+
+        // Set default date to tomorrow
+        function setupDateDefault() {
+            const dateInput = document.getElementById('bookingDate');
+            if (dateInput) {
+                const tomorrow = new Date();
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                dateInput.value = tomorrow.toISOString().split('T')[0];
+                dateInput.min = new Date().toISOString().split('T')[0];
+            }
+        }
+
+        function setCategory(cat) {
+            currentCategory = cat;
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                if (btn.dataset.category === cat) {
+                    btn.className = 'cat-btn px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap bg-amber-500 text-slate-950 shadow-md transition';
+                } else {
+                    btn.className = 'cat-btn px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap bg-slate-900 text-slate-300 hover:text-white border border-slate-800 transition';
+                }
+            });
+            renderServices();
+        }
+
+        function filterServices() {
+            searchQuery = document.getElementById('searchInput').value.toLowerCase();
+            renderServices();
+        }
+
+        function syncAndFilter(val) {
+            searchQuery = val.toLowerCase();
+            const desktopInput = document.getElementById('searchInput');
+            if(desktopInput) desktopInput.value = val;
+            renderServices();
+        }
+
+        function renderServices() {
+            const container = document.getElementById('servicesContainer');
+            container.innerHTML = '';
+
+            const filtered = servicesData.filter(s => {
+                const matchCategory = (currentCategory === 'all') || (s.category === currentCategory);
+                const matchSearch = s.title.toLowerCase().includes(searchQuery) || s.description.toLowerCase().includes(searchQuery);
+                return matchCategory && matchSearch;
+            });
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full py-16 text-center space-y-3">
+                        <i data-lucide="search-x" class="w-12 h-12 text-slate-600 mx-auto"></i>
+                        <h3 class="text-lg font-bold text-white">No Services Match Search</h3>
+                        <p class="text-xs text-slate-400">Try adjusting your query or click Request Initial Consultation.</p>
+                    </div>
+                `;
+                lucide.createIcons();
+                return;
+            }
+
+            filtered.forEach(s => {
+                const card = document.createElement('div');
+                card.className = 'glass-card rounded-2xl overflow-hidden border border-slate-800 hover:border-amber-500/40 transition-all duration-300 flex flex-col justify-between group shadow-lg hover:shadow-amber-500/10';
+                
+                card.innerHTML = `
+                    <div>
+                        <!-- Image & Badges -->
+                        <div class="relative h-48 overflow-hidden bg-slate-900">
+                            <img src="${s.image}" alt="${s.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" onerror="this.src='https://placehold.co/600x400/1e293b/f59e0b?text=${encodeURIComponent(s.title)}'">
+                            <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent"></div>
+                            
+                            ${s.popular ? `
+                                <span class="absolute top-3 left-3 bg-amber-500 text-slate-950 text-xs font-black px-2.5 py-1 rounded-lg shadow-md flex items-center gap-1">
+                                    <i data-lucide="sparkles" class="w-3 h-3"></i> POPULAR
+                                </span>
+                            ` : ''}
+
+                            <div class="absolute bottom-3 left-3 right-3 flex justify-between items-end">
+                                <div>
+                                    <span class="text-xs text-amber-400 font-semibold uppercase tracking-wider block">${s.category.toUpperCase()}</span>
+                                    <h3 class="text-lg font-bold text-white leading-tight">${s.title}</h3>
+                                </div>
+                                <div class="text-right">
+                                    <span class="text-xs text-slate-400 block">${s.unit}</span>
+                                    <span class="text-xl font-extrabold text-amber-400">$${s.price}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card Body -->
+                        <div class="p-5 space-y-3">
+                            <div class="flex items-center gap-2 text-xs text-slate-400">
+                                <span class="flex items-center text-amber-400 font-semibold gap-1">
+                                    <i data-lucide="star" class="w-3.5 h-3.5 fill-amber-400"></i> ${s.rating}
+                                </span>
+                                <span>(${s.reviews} reviews)</span>
+                                <span class="mx-1">•</span>
+                                <span class="text-slate-300">Set Quantity (1, 2, 3...)</span>
+                            </div>
+
+                            <p class="text-xs text-slate-300 leading-relaxed line-clamp-3">
+                                ${s.description}
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Card Actions -->
+                    <div class="p-5 pt-0 mt-auto flex flex-col sm:flex-row items-center gap-2">
+                        <button onclick="openBookingModal('${s.id}')" class="w-full py-2.5 rounded-xl gold-gradient-bg text-slate-950 font-bold text-xs shadow-md hover:brightness-110 transition flex items-center justify-center gap-1.5">
+                            <i data-lucide="calendar" class="w-4 h-4"></i> Book (Set Qty)
+                        </button>
+                        <button onclick="openConsultationForService('${s.title}')" class="w-full sm:w-auto py-2.5 px-3 rounded-xl bg-slate-900 border border-slate-700 text-amber-400 hover:bg-slate-800 text-xs font-semibold transition flex items-center justify-center gap-1 whitespace-nowrap" title="Ask Questions First">
+                            <i data-lucide="help-circle" class="w-3.5 h-3.5"></i> Consult
+                        </button>
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
+
+            lucide.createIcons();
+        }
+
+        function renderTimeSlots() {
+            const container = document.getElementById('timeSlotsContainer');
+            if(!container) return;
+            container.innerHTML = '';
+
+            timeSlots.forEach(slot => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.onclick = () => selectTimeSlot(slot);
+                if (slot === selectedTimeSlot) {
+                    btn.className = 'slot-btn py-2 px-3 rounded-xl border text-xs font-bold text-slate-950 bg-amber-400 border-amber-400 shadow-sm transition';
+                } else {
+                    btn.className = 'slot-btn py-2 px-3 rounded-xl border text-xs font-medium text-slate-300 bg-slate-950 border-slate-800 hover:border-slate-700 transition';
+                }
+                btn.textContent = slot;
+                container.appendChild(btn);
+            });
+        }
+
+        function selectTimeSlot(slot) {
+            selectedTimeSlot = slot;
+            renderTimeSlots();
+        }
+
+        function openConsultationModal() {
+            document.getElementById('consultationModal').classList.remove('hidden');
+        }
+
+        function closeConsultationModal() {
+            document.getElementById('consultationModal').classList.add('hidden');
+        }
+
+        function openConsultationForService(serviceTitle) {
+            openConsultationModal();
+            const select = document.getElementById('consultServicePref');
+            if(select) {
+                for(let option of select.options) {
+                    if(option.value.includes(serviceTitle) || serviceTitle.includes(option.value)) {
+                        option.selected = true;
+                        break;
+                    }
+                }
+            }
+        }
+
+        function submitConsultationForm() {
+            const name = document.getElementById('consultName').value.trim();
+            const phone = document.getElementById('consultPhone').value.trim();
+            const email = document.getElementById('consultEmail').value.trim();
+            const service = document.getElementById('consultServicePref').value;
+            const guests = document.getElementById('consultGuestCount').value;
+            const notes = document.getElementById('consultNotes').value.trim();
+
+            if (!name || !phone || !email) {
+                alert('Please provide your Name, Phone number, and Email address so Henry Vo Concierge can reach you.');
+                return;
+            }
+
+            const subject = encodeURIComponent(`[Consultation Request] ${service} - Guest: ${name}`);
+            const bodyText = `Henry Vo Concierge Consultation Request\n\n` +
+                `Guest Name: ${name}\n` +
+                `Phone/WhatsApp: ${phone}\n` +
+                `Email: ${email}\n` +
+                `Service Interest: ${service}\n` +
+                `Guest Quantity: ${guests}\n` +
+                `Notes / Questions:\n${notes || 'No notes provided'}\n\n` +
+                `Sent via Henry Vo Bookings Portal`;
+
+            const mailtoUrl = `mailto:${AGENT_EMAIL}?subject=${subject}&body=${encodeURIComponent(bodyText)}`;
+            
+            closeConsultationModal();
+            
+            // Trigger mailto link
+            window.location.href = mailtoUrl;
+
+            alert(`Thank you ${name}! Your consultation inquiry has been formatted and opened in your email client addressed to ${AGENT_EMAIL}. Henry Vo Concierge will review your request promptly.`);
+        }
+
+        function openBookingModal(serviceId) {
+            activeService = servicesData.find(s => s.id === serviceId);
+            if (!activeService) return;
+
+            selectedModalQty = 1;
+            document.getElementById('modalServiceTitle').textContent = activeService.title;
+            document.getElementById('modalServiceCategory').textContent = activeService.category.toUpperCase() + ' SERVICE';
+            document.getElementById('modalUnitPrice').textContent = '$' + activeService.price;
+            document.getElementById('modalUnitLabel').textContent = ' / ' + activeService.unit;
+            document.getElementById('modalQtyDisplay').textContent = selectedModalQty;
+            
+            updateModalTotal();
+
+            document.getElementById('bookingModal').classList.remove('hidden');
+        }
+
+        function closeBookingModal() {
+            document.getElementById('bookingModal').classList.add('hidden');
+        }
+
+        function updateModalQty(delta) {
+            selectedModalQty = Math.max(1, selectedModalQty + delta);
+            document.getElementById('modalQtyDisplay').textContent = selectedModalQty;
+            updateModalTotal();
+        }
+
+        function updateModalTotal() {
+            if (!activeService) return;
+            const total = activeService.price * selectedModalQty;
+            document.getElementById('modalTotalPrice').textContent = '$' + total;
+        }
+
+        function addToCartFromModal() {
+            if (!activeService) return;
+
+            const date = document.getElementById('bookingDate').value;
+            if (!date) {
+                alert('Please pick a date for your booking.');
+                return;
+            }
+
+            const existingIndex = cart.findIndex(item => item.service.id === activeService.id && item.date === date && item.time === selectedTimeSlot);
+
+            if (existingIndex > -1) {
+                cart[existingIndex].qty += selectedModalQty;
+            } else {
+                cart.push({
+                    service: activeService,
+                    qty: selectedModalQty,
+                    date: date,
+                    time: selectedTimeSlot
+                });
+            }
+
+            closeBookingModal();
+            updateCartUI();
+            toggleCartDrawer(true);
+        }
+
+        function confirmSingleBooking() {
+            const name = document.getElementById('custName').value.trim();
+            const phone = document.getElementById('custPhone').value.trim();
+            const email = document.getElementById('custEmail').value.trim();
+            const date = document.getElementById('bookingDate').value;
+            const notes = document.getElementById('custNotes').value.trim();
+
+            if (!name || !phone) {
+                alert('Please provide your Name and Phone Number to request a booking.');
+                return;
+            }
+
+            cart = [{
+                service: activeService,
+                qty: selectedModalQty,
+                date: date,
+                time: selectedTimeSlot,
+                notes: notes
+            }];
+
+            closeBookingModal();
+            showConfirmationScreen(name, phone, email);
+        }
+
+        function toggleCartDrawer(forceOpen = false) {
+            const drawer = document.getElementById('cartDrawer');
+            if (forceOpen) {
+                drawer.classList.remove('hidden');
+            } else {
+                drawer.classList.toggle('hidden');
+            }
+        }
+
+        function updateCartUI() {
+            const countBadge = document.getElementById('cartBadgeCount');
+            const itemsContainer = document.getElementById('cartItemsContainer');
+            const checkoutBtn = document.getElementById('cartCheckoutBtn');
+            
+            const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
+            countBadge.textContent = totalQty;
+
+            itemsContainer.innerHTML = '';
+
+            if (cart.length === 0) {
+                itemsContainer.innerHTML = `
+                    <div class="py-12 text-center space-y-3">
+                        <i data-lucide="calendar-x" class="w-10 h-10 text-slate-600 mx-auto"></i>
+                        <p class="text-xs text-slate-400">Your booking cart is currently empty.</p>
+                        <p class="text-xs text-amber-400 font-medium">Select a service above to customize quantity.</p>
+                    </div>
+                `;
+                checkoutBtn.disabled = true;
+                calculateCartTotals(0);
+                lucide.createIcons();
+                return;
+            }
+
+            checkoutBtn.disabled = false;
+            let subtotal = 0;
+
+            cart.forEach((item, index) => {
+                const itemTotal = item.service.price * item.qty;
+                subtotal += itemTotal;
+
+                const card = document.createElement('div');
+                card.className = 'glass-card p-4 rounded-2xl border border-slate-800 space-y-3';
+                card.innerHTML = `
+                    <div class="flex items-start justify-between gap-2">
+                        <div>
+                            <h4 class="font-bold text-white text-sm">${item.service.title}</h4>
+                            <p class="text-xs text-amber-400 font-medium">${item.date} @ ${item.time}</p>
+                        </div>
+                        <button onclick="removeCartItem(${index})" class="text-slate-500 hover:text-red-400 p-1 transition">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+
+                    <div class="flex items-center justify-between text-xs pt-1 border-t border-slate-800/80">
+                        <div class="flex items-center gap-2">
+                            <span class="text-slate-400">Qty:</span>
+                            <div class="inline-flex items-center bg-slate-950 rounded-lg border border-slate-800 p-0.5">
+                                <button onclick="changeCartQty(${index}, -1)" class="w-6 h-6 rounded bg-slate-800 text-slate-300 font-bold hover:bg-amber-500 hover:text-slate-950">-</button>
+                                <span class="w-8 text-center font-bold text-white">${item.qty}</span>
+                                <button onclick="changeCartQty(${index}, 1)" class="w-6 h-6 rounded bg-slate-800 text-slate-300 font-bold hover:bg-amber-500 hover:text-slate-950">+</button>
+                            </div>
+                        </div>
+                        <span class="font-extrabold text-white text-sm">$${itemTotal}</span>
+                    </div>
+                `;
+                itemsContainer.appendChild(card);
+            });
+
+            calculateCartTotals(subtotal);
+            lucide.createIcons();
+        }
+
+        function changeCartQty(index, delta) {
+            cart[index].qty += delta;
+            if (cart[index].qty <= 0) {
+                cart.splice(index, 1);
+            }
+            updateCartUI();
+        }
+
+        function removeCartItem(index) {
+            cart.splice(index, 1);
+            updateCartUI();
+        }
+
+        function calculateCartTotals(subtotal) {
+            const subtotalEl = document.getElementById('cartSubtotal');
+            const discountRow = document.getElementById('comboDiscountRow');
+            const discountEl = document.getElementById('cartDiscount');
+            const totalEl = document.getElementById('cartTotal');
+
+            subtotalEl.textContent = '$' + subtotal;
+
+            let discount = 0;
+            if (cart.length >= 2) {
+                discount = Math.round(subtotal * 0.10);
+                discountRow.classList.remove('hidden');
+                discountEl.textContent = '-$' + discount;
+            } else {
+                discountRow.classList.add('hidden');
+            }
+
+            const finalTotal = subtotal - discount;
+            totalEl.textContent = '$' + finalTotal;
+        }
+
+        function openCartCheckoutModal() {
+            if (cart.length === 0) return;
+            toggleCartDrawer();
+
+            const name = prompt("Please enter your Full Name for reservation booking:");
+            if (!name) return;
+            
+            const phone = prompt("Please enter your Phone / WhatsApp Number:");
+            if (!phone) return;
+
+            const email = prompt("Please enter your Email address (for booking receipt dispatch):") || "";
+
+            showConfirmationScreen(name, phone, email);
+        }
+
+        function showConfirmationScreen(guestName, guestPhone, guestEmail) {
+            const refCode = 'HVB-' + Math.floor(100000 + Math.random() * 900000);
+            
+            document.getElementById('confRefCode').textContent = refCode;
+            document.getElementById('confGuestName').textContent = guestName;
+            document.getElementById('confGuestPhone').textContent = guestPhone;
+
+            const dates = cart.map(i => i.date + ' (' + i.time + ')').join(', ');
+            document.getElementById('confDateTime').textContent = dates || 'As scheduled';
+
+            const servicesListContainer = document.getElementById('confServicesList');
+            servicesListContainer.innerHTML = '';
+
+            let total = 0;
+            let itemsSummary = [];
+
+            cart.forEach(i => {
+                const itemCost = i.service.price * i.qty;
+                total += itemCost;
+                itemsSummary.push(`${i.qty}x ${i.service.title} ($${itemCost})`);
+
+                const row = document.createElement('div');
+                row.className = 'flex justify-between text-xs';
+                row.innerHTML = `
+                    <span class="text-slate-300">${i.qty}x ${i.service.title}</span>
+                    <span class="text-slate-200 font-bold">$${itemCost}</span>
+                `;
+                servicesListContainer.appendChild(row);
+            });
+
+            if (cart.length >= 2) {
+                const disc = Math.round(total * 0.10);
+                total -= disc;
+                const discRow = document.createElement('div');
+                discRow.className = 'flex justify-between text-xs text-emerald-400 font-bold';
+                discRow.innerHTML = `
+                    <span>Combo Discount (10%)</span>
+                    <span>-$${disc}</span>
+                `;
+                servicesListContainer.appendChild(discRow);
+            }
+
+            document.getElementById('confTotalAmount').textContent = '$' + total;
+
+            // Cache last confirmed booking payload
+            lastConfirmedBooking = {
+                refCode,
+                guestName,
+                guestPhone,
+                guestEmail,
+                dates,
+                itemsSummary: itemsSummary.join(', '),
+                total: '$' + total
+            };
+
+            document.getElementById('confirmationModal').classList.remove('hidden');
+
+            // Reset cart
+            cart = [];
+            updateCartUI();
+        }
+
+        function sendDirectEmailToAgent() {
+            if (!lastConfirmedBooking) return;
+            const b = lastConfirmedBooking;
+
+            const subject = encodeURIComponent(`[Booking Order ${b.refCode}] - Guest: ${b.guestName}`);
+            const body = `Henry Vo Bookings Reservation Order\n\n` +
+                `Ref Code: ${b.refCode}\n` +
+                `Guest Name: ${b.guestName}\n` +
+                `Phone Number: ${b.guestPhone}\n` +
+                `Guest Email: ${b.guestEmail || 'N/A'}\n` +
+                `Schedule: ${b.dates}\n` +
+                `Services Reserved: ${b.itemsSummary}\n` +
+                `Total Amount: ${b.total}\n\n` +
+                `Please process and reconfirm this reservation with the respective shop/service providers.\n\n` +
+                `Submitted via Henry Vo Bookings Agent Portal`;
+
+            window.location.href = `mailto:${AGENT_EMAIL}?subject=${subject}&body=${encodeURIComponent(body)}`;
+        }
+
+        function closeConfirmationModal() {
+            document.getElementById('confirmationModal').classList.add('hidden');
+        }
+
+        function copyReceiptText() {
+            if (!lastConfirmedBooking) return;
+            const b = lastConfirmedBooking;
+            const text = `Henry Vo Bookings Reservation\nRef: ${b.refCode}\nName: ${b.guestName}\nPhone: ${b.guestPhone}\nSchedule: ${b.dates}\nItems: ${b.itemsSummary}\nTotal: ${b.total}\nSent to: ${AGENT_EMAIL}`;
+            
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(text);
+            } else {
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+            }
+            alert('Booking summary copied! You can now paste or send this via email to vothanhnien@gmail.com');
+        }
+
+        // Toggle Google Sites Embed Guide
+        function toggleEmbedGuide() {
+            const modal = document.getElementById('embedGuideModal');
+            modal.classList.toggle('hidden');
+        }
+
+        function copyIframeCode() {
+            const textarea = document.getElementById('iframeCodeText');
+            textarea.select();
+            document.execCommand('copy');
+            alert('iFrame code snippet copied! You can now paste this directly into Google Sites.');
+        }
+    </script>
+</body>
+</html>
